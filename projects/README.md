@@ -1,15 +1,20 @@
-# DNA Sequence Analyzer
+# Python Learnings 🐍
 
-## Description
-A beginner bioinformatics project written in Python.
+This repository contains my Python learning journey and bioinformatics projects.
 
-## Features
-- Takes a DNA sequence as input
-- Converts it to uppercase
-- Calculates sequence length
-- Counts A, T, G, and C bases
-- Calculates GC content
-- Calculates AT content
+## Completed Projects
 
-## Technologies
-- Python 3
+- ✅ DNA Sequence Analyzer (Version 1)
+
+## Skills Learned
+
+- Variables
+- Loops
+- If-Else Statements
+- Strings
+- User Input
+- f-Strings
+
+## Goal
+
+I'm pursuing an MSc in Bioinformatics at MAHE and building my skills in Python, AI, Bioinformatics, and Data Analytics to prepare for research internships and industry roles.
