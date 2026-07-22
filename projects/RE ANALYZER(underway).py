@@ -11,21 +11,21 @@ def dna_cut(sequence, restriction_site):
 
 
 def offset_position(site_positions, offset_number):
-    cut_positions = []
+    cutting_positions = []
     for i in site_positions:
-        cut_positions.append(i + offset_number)
-    return cut_positions
+        cutting_positions.append(i + offset_number)
+    return cutting_positions
 
-print(dna_cut('TTTATGACGGTAGCAATAGCAATAGC', 'TGAC'))
 
-sites = dna_cut('TTTATGACGGTAGCAATAGCAATAGC', 'TGAC')
-print(offset_position(sites, 2))
+def cut_sequence(sequence, cutting_positions):
+    fragments = []
+    prev = 0
+    for pos in cutting_positions:
+        fragments.append(sequence[prev:pos])
+        prev = pos
+    fragments.append(sequence[prev:])  # last piece
+    return fragments
+print fragments
 
-cut_sequence=[]
-for x in len(dna_cut(sequence)):
-    if x == cut_positions:
-        cut_sequence.append(dna_cut(x,len(restriction site+1)))
-    else:
-        pass
-    
-    
+
+print(dna_cut('tttaaaggcctggatgcgcggtagatgcggttaagccgta','tag'))
