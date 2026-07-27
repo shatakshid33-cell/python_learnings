@@ -46,4 +46,3 @@
     #    print('operation occured')
 
 
-#ques 2
