@@ -42,15 +42,18 @@ CI = p ± 1.96 × sqrt(p(1-p) / n)
 
 where `p` is the observed readmission rate and `n` is the number of encounters in that group. This is the standard, widely-used approximation and is appropriate here because sample sizes are large for most groups (n > 1,000). For the two smallest groups (risk scores 6 and 7, n=369 and n=237), the Wald approximation is less precise than alternatives like the Wilson score interval, and the resulting intervals should be read as directionally correct but approximate — they are wide enough (24.4–33.6% and 29.8–42.0% respectively) that the point estimate alone should not be over-trusted at that sample size.
 
-**Not yet computed:** the age × prior-visits cross-tab cells (e.g., 41.57% for ages 20–30 with 3+ prior visits) were reported as rates only — the underlying cell counts were not extracted during the original analysis. To compute exact CIs for these cells, run:
+**Age × prior-visits interaction cells:** unlike the single-variable groupbys above, this cross-tab required pulling cell-level counts separately (they aren't shown in a `pivot_table` built with `aggfunc='mean'` alone). The two cells behind the age-interaction finding:
+
+- Ages 20–30, 3+ prior visits: 41.57% (95% CI: 35.52–47.62%, n=255)
+- Ages 90–100, 3+ prior visits: 17.86% (95% CI: 11.52–24.20%, n=140)
+
+Both are among the smallest cells in the analysis, so the intervals are wide — but they do not overlap (20–30's lower bound of 35.5% is still above 90–100's upper bound of 24.2%), so the interaction effect holds even accounting for that uncertainty. Code used to extract the counts:
 
 ```python
 cross_tab_counts = df_clean.groupby(['age', 'prior_visits_bucket'], observed=True)['readmitted_30d'].agg(['mean', 'count'])
 cross_tab_counts['mean'] = (cross_tab_counts['mean'] * 100).round(2)
 print(cross_tab_counts)
 ```
-
-Then apply the same formula above using each cell's `count` as `n`. This should be done before citing the age-interaction finding as a precise, defensible number in an interview — right now it's a real pattern in the data, but its statistical confidence hasn't been formally quantified.
 
 ## 5. Risk Score Construction
 
@@ -88,5 +91,5 @@ The 0–7 point risk score was built by hand from the groupby/pivot findings in 
 - Analysis is **descriptive and rule-based**, not predictive modeling — associations shown do not establish causation.
 - The risk score has **not been validated on held-out or external data** (see Section 5).
 - ICD-9 codes are grouped into broad categories, hiding differences between individual diagnoses.
-- Age × prior-visits interaction CIs are not yet computed (see Section 4) — treat the 41.57%/17.86% comparison as a real but not yet statistically quantified pattern.
+- The age × prior-visits interaction (41.57% vs 17.86%) is based on small cells (n=255 and n=140), giving wide confidence intervals; the finding holds since the intervals don't overlap, but should be treated as less precise than the larger single-variable findings.
 - Smaller segments (age 20–30, n=1,657; risk scores 6–7, n=369/237) carry wider uncertainty and should be read with appropriate caution, as reflected in their wider confidence intervals.
