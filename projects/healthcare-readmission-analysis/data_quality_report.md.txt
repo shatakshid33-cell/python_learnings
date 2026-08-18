@@ -1,0 +1,44 @@
+# Data Quality Report
+
+## Dataset Overview
+- **Source:** Diabetes 130-US Hospitals for Years 1999–2008 (UCI ML Repository)
+- **Total encounters:** 101,766
+- **Unique patients:** 71,518
+- **Original columns:** 50
+
+Note: encounters exceed unique patients because ~30,000 patients had more than one hospital visit in the dataset. Analysis is conducted at the **encounter level** (each hospital stay treated as an independent event), matching how hospitals track readmissions in practice.
+
+## Missing Data Handling
+
+This dataset uses `"?"` as a placeholder for missing values rather than true nulls, so missingness was assessed with `(df == '?').sum()` rather than `df.isnull().sum()`.
+
+| Column | Missing | % of rows | Decision | Rationale |
+|---|---|---|---|---|
+| `weight` | 98,569 | 96.9% | Dropped | Too sparse to be usable |
+| `payer_code` | 40,256 | 39.6% | Dropped | Insurance billing code, not clinically relevant to readmission risk |
+| `medical_specialty` | 49,949 | 49.1% | Filled as "Unknown" | Still informative even with ~50% missing; dropping would lose half the dataset's specialty signal |
+| `race` | 2,273 | 2.2% | Filled as "Unknown" | Small gap; dropping rows would lose data unnecessarily |
+| `diag_1` | 21 | 0.02% | Filled as "Unknown" | Negligible gap |
+| `diag_2` | 358 | 0.35% | Filled as "Unknown" | Negligible gap |
+| `diag_3` | 1,423 | 1.4% | Filled as "Unknown" | Small gap |
+
+**Rule of thumb applied:** columns missing roughly 70%+ of values were dropped (imputation would be mostly guessing); columns below that threshold were filled with "Unknown" to preserve rows.
+
+## Diagnosis Code Recoding
+
+`diag_1`, `diag_2`, and `diag_3` contain raw ICD-9 codes. These were mapped into broad clinical categories (Circulatory, Respiratory, Digestive, Diabetes, Injury, Musculoskeletal, Genitourinary, Neoplasms, Supplemental, External causes, Other) using standard ICD-9 code range groupings.
+
+## Target Variable
+
+The original `readmitted` column contains three categories: `NO`, `>30`, `<30`. A binary column `readmitted_30d` was derived (`1` if `<30`, else `0`) to focus specifically on 30-day readmission, which is the metric relevant to CMS readmission penalties.
+
+**Class balance:** 11,357 readmitted within 30 days (11.2%) vs. 90,409 not (88.8%) — an imbalanced target, which was accounted for when interpreting rate comparisons (a "2x" difference is 2x of an 11% baseline, not 50%).
+
+## Small Sample Caveats
+
+Some analysis segments have limited sample sizes and should be interpreted with caution:
+- Age `[0-10)`: 161 encounters
+- Age `[10-20)`: 691 encounters
+- Age `[20-30)`: 1,657 encounters (still notably smaller than the 17,000–26,000 encounters in middle age brackets)
+- Risk score 6: 369 encounters
+- Risk score 7: 237 encounters
